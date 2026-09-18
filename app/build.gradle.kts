@@ -15,8 +15,8 @@ android {
         applicationId = "br.com.viktus.telas.kiosk" // Viktus Telas fork: own package, so it never collides with the F-Droid build
         minSdk = 21
         targetSdk = 37
-        versionCode = 139
-        versionName = "0.26.19-viktus.7"
+        versionCode = 140
+        versionName = "0.26.19-viktus.8"
         buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
     }
 

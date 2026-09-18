@@ -39,6 +39,18 @@ class ViktusTelasInterface(private val context: Context) {
     @JavascriptInterface
     fun versao(): String = BuildConfig.VERSION_NAME
 
+    /** The stick's IPv4 on the LAN (first non-loopback), or "" : the pairing screen shows it so the kit and support get it without Settings. */
+    @Suppress("unused")
+    @JavascriptInterface
+    fun ip(): String {
+        return try {
+            java.net.NetworkInterface.getNetworkInterfaces().toList()
+                .filter { it.isUp && !it.isLoopback }
+                .flatMap { it.inetAddresses.toList() }
+                .firstOrNull { it is java.net.Inet4Address && !it.isLoopbackAddress }?.hostAddress ?: ""
+        } catch (_: Exception) { "" }
+    }
+
     /** Last status: ocioso · baixando · verificando · instalando · erro: <motivo>. */
     @Suppress("unused")
     @JavascriptInterface
