@@ -238,8 +238,10 @@ fun createCustomWebview(
                 javaScriptEnabled = userSettings.enableJavaScript
                 domStorageEnabled = userSettings.enableDomStorage
                 cacheMode = userSettings.cacheMode.mode
-                userAgentString = userSettings.userAgent.takeIf { it.isNotBlank() }
-                    ?: settings.userAgentString
+                // Viktus Telas fork: the player and the panel's health page read the app version
+                // from the UA (WebView exposes nothing else about the host app).
+                userAgentString = (userSettings.userAgent.takeIf { it.isNotBlank() }
+                    ?: settings.userAgentString) + " ViktusTelas/" + uk.nktnet.webviewkiosk.BuildConfig.VERSION_NAME
                 layoutAlgorithm = userSettings.layoutAlgorithm.algorithm
                 useWideViewPort = userSettings.useWideViewport
                 loadWithOverviewMode = userSettings.loadWithOverviewMode
