@@ -38,6 +38,8 @@ import uk.nktnet.webviewkiosk.utils.stringEnumPref
 import uk.nktnet.webviewkiosk.utils.stringPref
 import uk.nktnet.webviewkiosk.utils.stringPrefOptional
 
+// Viktus Telas fork: the defaults below are the Telas kiosk profile (was scripts/stick/kiosk-settings.json
+// in the viktus-telas repo). Installing the APK is configuring it; nothing to import on the TV.
 class UserSettings(val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(
         UserSettingsKeys.PREFS_NAME,
@@ -57,7 +59,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebContent.HOME_URL,
-        Constants.WEBSITE_URL
+        "https://telas.viktus.com.br/player"
     )
     var websiteBlacklist by stringPrefOptional(
         getRestrictions,
@@ -104,7 +106,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebBrowsing.ALLOW_BACKWARDS_NAVIGATION,
-        true
+        false
     )
     var allowGoHome by booleanPref(
         getRestrictions,
@@ -116,7 +118,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebBrowsing.CLEAR_HISTORY_ON_HOME,
-        false
+        true
     )
     var replaceHistoryUrlOnRedirect by booleanPref(
         getRestrictions,
@@ -308,7 +310,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebEngine.MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
-        true
+        false
     )
     var sslErrorMode by stringEnumPref(
         getRestrictions,
@@ -343,13 +345,13 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebLifecycle.LOCK_ON_LAUNCH,
-        false
+        true
     )
     var resetOnLaunch by booleanPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.WebLifecycle.RESET_ON_LAUNCH,
-        false
+        true
     )
     var resetOnInactivitySeconds by intPref(
         getRestrictions,
@@ -371,14 +373,14 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.WebLifecycle.REFRESH_ON_NETWORK_AVAILABLE,
-        RefreshOnNetworkAvailableOption.ON_PAGE_ERROR.name,
+        RefreshOnNetworkAvailableOption.ALWAYS.name,
         fromString = RefreshOnNetworkAvailableOption::fromString
     )
     var refreshOnLoadingErrorIntervalSeconds by intPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.WebLifecycle.REFRESH_ON_LOADING_ERROR_INTERVAL_SECONDS,
-        0,
+        30,
         min = 0,
         max = Constants.MAX_INT_SETTING,
     )
@@ -388,28 +390,28 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.Appearance.THEME,
-        ThemeOption.SYSTEM.name,
+        ThemeOption.DARK.name,
         fromString = ThemeOption::fromString
     )
     var floatingToolbarMode by stringEnumPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.Appearance.FLOATING_TOOLBAR_MODE,
-        FloatingToolbarModeOption.HIDDEN_WHEN_LOCKED.name,
+        FloatingToolbarModeOption.HIDDEN.name,
         fromString = FloatingToolbarModeOption::fromString
     )
     var webViewInset by stringEnumPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.Appearance.WEBVIEW_INSET,
-        WebViewInsetOption.SYSTEM_BARS.name,
+        WebViewInsetOption.NONE.name,
         fromString = WebViewInsetOption::fromString
     )
     var immersiveMode by stringEnumPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.Appearance.IMMERSIVE_MODE,
-        ImmersiveModeOption.ONLY_WHEN_LOCKED.name,
+        ImmersiveModeOption.ALWAYS_ON.name,
         fromString = ImmersiveModeOption::fromString
     )
     var blockedMessage by stringPref(
@@ -427,7 +429,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.Appearance.ADDRESS_BAR_MODE,
-        AddressBarModeOption.HIDDEN_WHEN_LOCKED.name,
+        AddressBarModeOption.HIDDEN.name,
         fromString = AddressBarModeOption::fromString
     )
     var addressBarSize by stringEnumPref(
@@ -450,7 +452,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.Device.KEEP_SCREEN_ON,
-        false
+        true
     )
     var rotation by stringEnumPref(
         getRestrictions,

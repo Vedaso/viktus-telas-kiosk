@@ -12,11 +12,11 @@ android {
     namespace = "uk.nktnet.webviewkiosk"
 
     defaultConfig {
-        applicationId = "uk.nktnet.webviewkiosk"
+        applicationId = "br.com.viktus.telas.kiosk" // Viktus Telas fork: own package, so it never collides with the F-Droid build
         minSdk = 21
         targetSdk = 37
         versionCode = 133
-        versionName = "0.26.19"
+        versionName = "0.26.19-viktus.1"
         buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
     }
 
