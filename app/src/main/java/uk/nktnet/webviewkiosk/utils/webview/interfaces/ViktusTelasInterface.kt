@@ -82,7 +82,9 @@ class ViktusTelasInterface(private val context: Context) {
                 context.startActivity(Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
                     setDataAndType(uri, "application/vnd.android.package-archive")
                     putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    putExtra(Intent.EXTRA_RETURN_RESULT, true) // installer finishes itself instead of parking on "App installed"
+                    // CLEAR_TASK: a leftover installer screen from the previous update swallowed the new request (18/09)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 })
             } catch (e: Exception) {
                 estadoAtual = "erro: " + (e.message ?: e.javaClass.simpleName)
