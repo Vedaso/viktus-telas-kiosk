@@ -76,8 +76,12 @@ class ViktusTelasInterface(private val context: Context) {
                 if (!hash.equals(sha256, ignoreCase = true)) { apk.delete(); throw IllegalStateException("sha256 não confere") }
                 val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", apk)
                 estadoAtual = "instalando"
-                context.startActivity(Intent(Intent.ACTION_VIEW).apply {
+                // ACTION_INSTALL_PACKAGE goes straight to the package installer; a plain VIEW on an APK
+                // opened an "Open with" chooser on a stick that also had a file manager (18/09).
+                @Suppress("DEPRECATION")
+                context.startActivity(Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
                     setDataAndType(uri, "application/vnd.android.package-archive")
+                    putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 })
             } catch (e: Exception) {
