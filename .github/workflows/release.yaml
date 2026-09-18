@@ -44,7 +44,7 @@ jobs:
           cat "app/build/outputs/apk/release/output-metadata.json" >> "$GITHUB_STEP_SUMMARY"
           echo >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          mv app/build/outputs/apk/release/*.apk "app/build/outputs/apk/release/WebviewKiosk_v$VERSION_NAME.apk"
+          mv app/build/outputs/apk/release/*.apk "app/build/outputs/apk/release/ViktusTelas_v$VERSION_NAME.apk"
 
           # Get version code from output-metadata.json
           VERSION_CODE=$(jq -r ".elements[0].versionCode" app/build/outputs/apk/release/output-metadata.json 2>/dev/null || echo "0")
