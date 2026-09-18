@@ -61,6 +61,7 @@ import uk.nktnet.webviewkiosk.utils.webview.handlers.handlePermissionRequest
 import uk.nktnet.webviewkiosk.utils.webview.handlers.handleSslErrorPromptRequest
 import uk.nktnet.webviewkiosk.utils.webview.interfaces.BatteryInterface
 import uk.nktnet.webviewkiosk.utils.webview.interfaces.BlobInterface
+import uk.nktnet.webviewkiosk.utils.webview.interfaces.ViktusTelasInterface
 import uk.nktnet.webviewkiosk.utils.webview.interfaces.BrightnessInterface
 import uk.nktnet.webviewkiosk.utils.webview.interfaces.NfcInterface
 import uk.nktnet.webviewkiosk.utils.webview.isCustomBlockPageUrl
@@ -288,6 +289,8 @@ fun createCustomWebview(
             blobInterface?.let {
                 addJavascriptInterface(it, BlobInterface.NAME)
             }
+            // Viktus Telas fork: the player page updates this app through window.ViktusTelas
+            addJavascriptInterface(ViktusTelasInterface(context), ViktusTelasInterface.NAME)
 
             val requestUserAgent = settings.userAgentString
 

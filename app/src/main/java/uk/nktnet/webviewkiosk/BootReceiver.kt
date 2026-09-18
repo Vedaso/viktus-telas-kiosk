@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 
 /**
- * Viktus Telas fork: bring the player back after a power cut.
+ * Viktus Telas fork: bring the player back after a power cut or a self-update.
  *
  * Upstream relies on being the HOME app to start on boot, but some TV firmwares
  * (Mi TV Stick, Android 9, measured 18/09/2026) refuse to change the launcher and
@@ -15,7 +15,8 @@ import android.content.Intent
  */
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        // MY_PACKAGE_REPLACED: come back after a self-update (the installer kills the old process)
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED && intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
         val launch = Intent(context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
