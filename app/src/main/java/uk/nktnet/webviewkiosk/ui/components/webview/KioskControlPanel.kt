@@ -58,6 +58,7 @@ import uk.nktnet.webviewkiosk.config.option.BackButtonHoldActionOption
 import uk.nktnet.webviewkiosk.config.option.FloatingToolbarModeOption
 import uk.nktnet.webviewkiosk.config.option.KioskControlPanelRegionOption
 import uk.nktnet.webviewkiosk.config.option.WebviewControlActionOption
+import uk.nktnet.webviewkiosk.utils.WifiAccess
 import uk.nktnet.webviewkiosk.managers.ToastManager
 import uk.nktnet.webviewkiosk.states.BackButtonStateSingleton
 import uk.nktnet.webviewkiosk.states.LockStateSingleton
@@ -415,6 +416,17 @@ fun KioskControlPanel(
                     iconRes = R.drawable.apps_24px
                 )
             },
+            WebviewControlActionOption.WIFI to {
+                ActionButton(
+                    action = WebviewControlActionOption.WIFI,
+                    enabled = enableInteraction,
+                    onClick = {
+                        showDialog = false
+                        activity?.let { WifiAccess.open(it) }
+                    },
+                    iconRes = R.drawable.baseline_wifi_24
+                )
+            },
             WebviewControlActionOption.SETTINGS to {
                 ActionButton(
                     action = WebviewControlActionOption.SETTINGS,
@@ -529,6 +541,7 @@ fun KioskControlPanel(
                                 WebviewControlActionOption.LOCK -> !isLocked
                                 WebviewControlActionOption.UNLOCK -> isLocked
                                 WebviewControlActionOption.APPS,
+                                WebviewControlActionOption.WIFI,
                                 WebviewControlActionOption.FIND,
                                 WebviewControlActionOption.SCROLL_TOP,
                                 WebviewControlActionOption.SCROLL_BOT -> true

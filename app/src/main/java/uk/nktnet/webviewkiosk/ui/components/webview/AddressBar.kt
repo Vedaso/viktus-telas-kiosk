@@ -434,6 +434,7 @@ fun AddressBar(
                     WebviewControlActionOption.LOCK -> !isLocked
                     WebviewControlActionOption.UNLOCK -> isLocked
                     WebviewControlActionOption.APPS,
+                    WebviewControlActionOption.WIFI,
                     WebviewControlActionOption.FIND,
                     WebviewControlActionOption.SCROLL_TOP,
                     WebviewControlActionOption.SCROLL_BOT-> true

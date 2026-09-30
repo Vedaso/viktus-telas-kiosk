@@ -70,6 +70,7 @@ import uk.nktnet.webviewkiosk.utils.navigateToWebViewScreen
 import uk.nktnet.webviewkiosk.utils.setupLockTaskPackage
 import uk.nktnet.webviewkiosk.utils.tryLockTask
 import uk.nktnet.webviewkiosk.utils.tryUnlockTask
+import uk.nktnet.webviewkiosk.utils.WifiAccess
 import uk.nktnet.webviewkiosk.utils.updateDeviceSettings
 import uk.nktnet.webviewkiosk.utils.webview.NfcBridgeManager
 import uk.nktnet.webviewkiosk.utils.webview.getNfcAdapterOrNull
@@ -344,6 +345,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        WifiAccess.revoke(this)
         backButtonService.onBackPressedCallback.isEnabled = true
         enableNfcForegroundDispatch()
     }
