@@ -503,7 +503,7 @@ class UserSettings(val context: Context) {
         getRestrictions,
         prefs,
         UserSettingsKeys.Device.BACK_BUTTON_HOLD_ACTION,
-        BackButtonHoldActionOption.OPEN_KIOSK_CONTROL_PANEL.name,
+        BackButtonHoldActionOption.DISABLED.name, // Viktus Telas fork: the way out is the maintenance PIN (viktus/ModoLoja)
         fromString = BackButtonHoldActionOption::fromString
     )
     var customUnlockShortcut by stringPrefOptional(

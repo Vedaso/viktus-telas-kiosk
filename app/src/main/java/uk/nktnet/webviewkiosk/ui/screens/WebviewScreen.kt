@@ -199,6 +199,8 @@ fun WebviewScreen(navController: NavController) {
     }
 
     var lastErrorUrl by remember { mutableStateOf("") }
+    // Viktus Telas fork: the player page never loaded (no network at boot) -> native offline screen
+    LaunchedEffect(lastErrorUrl) { uk.nktnet.webviewkiosk.viktus.ModoLoja.erroDeCarga = lastErrorUrl.isNotEmpty() }
 
     var suggestions by remember { mutableStateOf(listOf<String>()) }
     var webViewRecreationKey by remember { mutableIntStateOf(0) }

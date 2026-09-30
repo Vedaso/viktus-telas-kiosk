@@ -69,6 +69,10 @@ import uk.nktnet.webviewkiosk.utils.handleMainIntent
 import uk.nktnet.webviewkiosk.utils.navigateToWebViewScreen
 import uk.nktnet.webviewkiosk.utils.setupLockTaskPackage
 import uk.nktnet.webviewkiosk.utils.tryLockTask
+import uk.nktnet.webviewkiosk.viktus.ManutencaoOverlay
+import uk.nktnet.webviewkiosk.viktus.ModoLoja
+import androidx.navigation.compose.currentBackStackEntryAsState
+import kotlinx.coroutines.Job
 import uk.nktnet.webviewkiosk.utils.tryUnlockTask
 import uk.nktnet.webviewkiosk.utils.updateDeviceSettings
 import uk.nktnet.webviewkiosk.utils.webview.NfcBridgeManager
@@ -83,6 +87,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var systemSettings: SystemSettings
     private lateinit var backButtonService: BackButtonManager
     private var lastOnStartTime = 0L
+    // Viktus Telas fork: holding Back 5 s on the player opens the maintenance PIN (viktus/ModoLoja)
+    private var segurarVoltarJob: Job? = null
 
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -297,6 +303,19 @@ class MainActivity : AppCompatActivity() {
                     } ?: run {
                         CustomAuthPasswordDialog()
                         SetupNavHost(navController)
+                        // Viktus Telas fork: maintenance PIN/menu and the native offline screen, over the player
+                        val rota by navController.currentBackStackEntryAsState()
+                        val naPlayer = rota?.destination?.route == Screen.WebView.route
+                        LaunchedEffect(naPlayer) {
+                            if (naPlayer && ModoLoja.saiu) {
+                                // Back on the player after "Sair do modo loja": store mode again, no timeout involved
+                                ModoLoja.voltouAoPlayer()
+                                if (userSettings.lockOnLaunch) tryLockTask(this@MainActivity)
+                            }
+                        }
+                        ManutencaoOverlay(this@MainActivity, naPlayer) {
+                            navController.navigate(Screen.Settings.route)
+                        }
                     }
                 }
             }
@@ -326,6 +345,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        ModoLoja.aoIniciar()
         lastOnStartTime = System.currentTimeMillis()
         AuthenticationManager.init(this)
         DeviceOwnerManager.init(this)
@@ -345,6 +365,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         backButtonService.onBackPressedCallback.isEnabled = true
+        ModoLoja.revogarSettings(this) // back from the Wi-Fi screen: settings leaves the lock task allowlist
         enableNfcForegroundDispatch()
     }
 
@@ -360,6 +381,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        ModoLoja.aoParar(this) // watchdog where lock task is not active (firmware refused device owner)
         if (!isChangingConfigurations) {
             AuthenticationManager.resetAuthentication()
             if (MqttManager.isConnected()) {
@@ -413,6 +435,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        // Viktus Telas fork: on the player in store mode Back does nothing, except held for 5 s,
+        // which opens the maintenance PIN. A timer on DOWN/UP, since some remotes send no key repeat.
+        if (event.keyCode == KeyEvent.KEYCODE_BACK && interceptaVoltar()) {
+            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                segurarVoltarJob?.cancel()
+                segurarVoltarJob = lifecycleScope.launch {
+                    delay(ModoLoja.SEGURAR_VOLTAR_MS)
+                    ModoLoja.abrirDialogo()
+                }
+            } else if (event.action == KeyEvent.ACTION_UP) {
+                segurarVoltarJob?.cancel()
+                segurarVoltarJob = null
+            }
+            return true
+        }
         if (handleKeyEvent(this, event)) {
             return true
         }
@@ -540,5 +577,10 @@ class MainActivity : AppCompatActivity() {
             NfcBridgeManager.onTagScanned(tag)
         }
         return true
+    }
+
+    private fun interceptaVoltar(): Boolean {
+        if (ModoLoja.saiu || ModoLoja.dialogo || !this::navController.isInitialized) return false
+        return navController.currentDestination?.route == Screen.WebView.route
     }
 }

@@ -8,6 +8,8 @@ import android.provider.Settings
 import android.webkit.JavascriptInterface
 import androidx.core.content.FileProvider
 import uk.nktnet.webviewkiosk.BuildConfig
+import uk.nktnet.webviewkiosk.viktus.ManutencaoStore
+import uk.nktnet.webviewkiosk.viktus.ModoLoja
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -51,6 +53,23 @@ class ViktusTelasInterface(private val context: Context) {
         } catch (_: Exception) { "" }
     }
 
+    // ── Maintenance (viktus/ModoLoja): the page hands over the PIN hash and ships the queued events ──
+
+    /** PIN hash from the poll; stored only when it changed, never erased (null keeps the current one). */
+    @Suppress("unused")
+    @JavascriptInterface
+    fun definirPin(hash: String?): String = ManutencaoStore(context).definirPin(hash)
+
+    /** Up to 50 queued events as a JSON array: [{id, tipo, ocorrido_em}]. */
+    @Suppress("unused")
+    @JavascriptInterface
+    fun eventosManutencao(): String = ManutencaoStore(context).eventosJson()
+
+    /** Drops the events the server accepted (JSON array of ids). */
+    @Suppress("unused")
+    @JavascriptInterface
+    fun confirmarEventos(idsJson: String): String = ManutencaoStore(context).confirmar(idsJson)
+
     /** Last status: ocioso · baixando · verificando · instalando · erro: <motivo>. */
     @Suppress("unused")
     @JavascriptInterface
@@ -72,6 +91,7 @@ class ViktusTelasInterface(private val context: Context) {
         }
         emAndamento = true
         estadoAtual = "baixando"
+        ModoLoja.pausar(5 * 60_000L) // the watchdog must not close the package installer
         thread(name = "viktus-telas-update") {
             try {
                 val dir = File(context.cacheDir, "apk").apply { mkdirs() }
