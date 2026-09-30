@@ -511,16 +511,19 @@ class UserSettings(val context: Context) {
         prefs,
         UserSettingsKeys.Device.CUSTOM_UNLOCK_SHORTCUT
     )
-    var customAuthPassword by stringPrefOptional(
+    // Viktus Telas fork: the store-mode PIN. Holding Back opens the kiosk panel and Unlock asks
+    // for it; staff at the store unlock with it to change the Wi-Fi (Victor, 30/09: "pode ser 0000").
+    var customAuthPassword by stringPref(
         getRestrictions,
         prefs,
-        UserSettingsKeys.Device.CUSTOM_AUTH_PASSWORD
+        UserSettingsKeys.Device.CUSTOM_AUTH_PASSWORD,
+        "0000"
     )
     var unlockAuthRequirement by stringEnumPref(
         getRestrictions,
         prefs,
         UserSettingsKeys.Device.UNLOCK_AUTH_REQUIREMENT,
-        UnlockAuthRequirementOption.DEFAULT.name,
+        UnlockAuthRequirementOption.REQUIRE.name, // Viktus Telas fork: Unlock always asks the PIN, device owner or not
         fromString = UnlockAuthRequirementOption::fromString
     )
     var blockScreenCapture by booleanPref(
