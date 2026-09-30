@@ -39,13 +39,11 @@ enum class WebviewControlActionOption(val label: String) {
             SCROLL_TOP,
         )
 
+        // Viktus Telas fork: only what store staff need. Apps is the way to Android Settings -> Wi-Fi
+        // after Unlock (PIN 0000): the app is the HOME launcher, so the Home key never leaves it (30/09).
         fun getDefaultKioskControlPanelOptions(): List<WebviewControlActionOption> = listOf(
-            NAVIGATION,
-            HOME,
             REFRESH,
-            HISTORY,
-            BOOKMARK,
-            FILES,
+            APPS,
             LOCK,
             UNLOCK,
         )
